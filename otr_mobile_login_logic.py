@@ -53,6 +53,7 @@ while True:
 if login == "login":
     print("Logged in")
 
+# New User Login Logic
 
 elif login =="signup":
 
@@ -65,31 +66,80 @@ elif login =="signup":
         else: print("Invalid Email, please try again.")
 
 
-    roles_selection_menu = []
+# Password Creation/Validation Logic
 
-    for number_of_role, available_roles in enumerate(Role.role_permissions): # For loop for creating items for role_selection_menu, enumerate counts each instance iterated over and stores it (for i, variable in main variable)
-        roles_selection_menu.append((number_of_role + 1, available_roles)) # Appends the for loop output to the empty list, uses double parathesis to make it one object as a tuple to be appendable. - added + 1 as Python defaults to 0.
+    print("Welcome ", new_user_email)
+
+    while True:
+        password_creation = input("Create Password: ")
+
+        accepted_password_symbols_list = ["@", "!", ".", "&", "$", "#", "?"]
+        accepted_password_numbers_list = ["1", "2", "3", "4", "5", "6", "7","8", "9", "0"]
+        accepted_password_uppletters_list = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y","z"]
+        accepted_password_lowletters_list = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y","Z"]
 
 
-    for selectable_roles_numbers, selectable_roles in roles_selection_menu:
-        
-        print (f"Available Roles:  {selectable_roles_numbers}. {selectable_roles}") # F string used here to unpack the tuple created by other for loop, as F strings only require "" at beginning and end - maintaining neatness.
-        
-        while True: # While loop used to ensure we get an expected & acceptable input.
-            new_user_role = int(input("What is your role? ")) # Added Capitialze to avoid possible mismatches.
+        password_creation_symbol_check = False  # Starting with the default value of the variable as False as we are looking for ANY possible match.
+        for accepted_password_symbols in accepted_password_symbols_list:  # Due to the fact a list can not be used in the <in> method I am using these for loops to iterate over every item in the related list. 
+            if accepted_password_symbols in password_creation: # If statement to check if any of the items in the list are found in the inputted password.
+                 password_creation_symbol_check = True  # If they are found, this variable is marked true to be called on in the main check.
+                 break  # Premature break here, to end the loop if one value is found as to not have it change due to another value later in the loop.
+            
 
-            if new_user_role == selectable_roles_numbers: # Makes sure input matches item from list.
-                new_user_role = selectable_roles # If input matches it assigns it the corresponding role.
+        password_creation_number_check = False
+        for accepted_password_numbers in accepted_password_numbers_list: # Identical Flow/Methodology as above here.
+            if accepted_password_numbers in password_creation:
+                 password_creation_number_check = True
+                 break
+            
+
+        password_creation_uppletter_check = False
+        for accepted_password_uppletters in accepted_password_uppletters_list:
+            if accepted_password_uppletters in password_creation:
+                 password_creation_uppletter_check = True
+                 break
+            
+        password_creation_lowletter_check = False
+        for accepted_password_lowletters in accepted_password_lowletters_list:
+                if accepted_password_lowletters in password_creation:
+                      password_creation_lowletter_check = True
                 break
-            else: print("Please choice a number from the list.")
+            
+
+        if password_creation_symbol_check == True and password_creation_number_check == True and password_creation_uppletter_check == True and password_creation_lowletter_check == True:  # Main Password Check ensuring every requirement is met at once.
+            user_password = password_creation
+            print("Password saved: ", user_password)
+            break
+
+        else: print("Invalid Password, please try again and include one symbol, upper-case letter, lower-case letter, and number in your desired password.")
+        
 
 
 
+    while True:
+             
+            roles_selection_menu = []
+
+            for number_of_role, available_roles in enumerate(Role.role_permissions): # For loop for creating items for role_selection_menu, enumerate counts each instance iterated over and stores it (for i, variable in main variable)
+                        roles_selection_menu.append((number_of_role + 1, available_roles)) # Appends the for loop output to the empty list, uses double parathesis to make it one object as a tuple to be appendable. - added + 1 as Python defaults to 0.
 
 
-    logged_in_user = User(new_user_email, new_user_role)
+            for selectable_roles_numbers, selectable_roles in roles_selection_menu:
+                        
+                        print (f"Available Roles:  {selectable_roles_numbers}. {selectable_roles}") # F string used here to unpack the tuple created by other for loop, as F strings only require "" at beginning and end - maintaining neatness.
+                        
+                        while True: # While loop used to ensure we get an expected & acceptable input.
+                            new_user_role = int(input("What is your role? ")) # Added Capitialze to avoid possible mismatches.
 
-    for users in User.all_users:  #Using for loop to iterate over and print each instance of (users in all_users) list.
-     print(users)
+                            if new_user_role == selectable_roles_numbers: # Makes sure input matches item from list.
+                                new_user_role = selectable_roles # If input matches it assigns it the corresponding role.
+                        
+                            else: print("Please choice a number from the list.")
+                            
+
+logged_in_user = User(new_user_email, new_user_role)
+
+for users in User.all_users:  #Using for loop to iterate over and print each instance of (users in all_users) list.
+    print(users)
 
     print(logged_in_user.get_permissions())
