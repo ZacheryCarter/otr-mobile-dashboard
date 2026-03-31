@@ -6,18 +6,22 @@
 class User:
    all_users = [] # Empty list for collection of all users.
 
-   def __init__(self, email, password, role): #Constructor used to allow for instances to be made automatically.
+   def __init__(self, email, password, role, credentials): #Constructor used to allow for instances to be made automatically.
       self.email = email
       self.password = password
       self.role = role
+      self.credentials = credentials  # Added credentials to add a list associsted with every class instance to be referenced later on - for login validation/verification purposes.
+
+      self.credentials = [self.email, self.password, self.role]
 
       User.all_users.append(self) # adds the entire user object to the (all_users) list
 
    def __str__(self): # Tells Python we want it to be a string. Rmbr Methods must be same indention as other methods like __init__ & __str__.
-          return f"{self.email},{self.password}, {self.role}" # F-String to print one user object when accessed/called. # ***Added Password for now to begin working on data storage.
+          return f"{self.email},{self.password},{self.role}" # F-String to print one user object when accessed/called. # ***Added Password for now to begin working on data storage.
    
    def get_permissions(self):
         return Role.role_permissions.get(self.role, []) # Gets the permissions for the User's Role
+
 
 class Role:
     def __init__ (self, role):
@@ -53,45 +57,33 @@ while True:
 # Existing User Login Logic
 
 if login == "login":
-            with open("OTR Mobile Dashboard - Saved Logins.txt", "r") as file: # Opens the text file with saved logins in <"r"> Read Only.
+            with open("OTR Mobile Dashboard - Saved Logins.txt", "r") as file: # Opens the text file with saved logins in <"r"> Read Only. ***STORES THEM AS A LIST ALREADY!
             
                 existing_login= file.readlines() #Using readlines instead of read to read each line as a list of strings one per line. Will need to break up into 3 objects for User constructer
                 
                 
-                
-                existing_user_list = []
-                for raw_existing_user in existing_login:
-                    
-                    existing_user_list.append(raw_existing_user)
-                   
-                existing_user = raw_existing_user
-                
-
-
+                parsed_users = [] # Added a list outside the for as I was having issues with it iterating over every line due to nature of for loops or breaking entirely due to indents.
                 
                 # This for loop is indented on the same line as existing_user_list to allow it to use the full list.
-                for existing_info in existing_user_list:  # A for loop to iterate over every item in the first line.
+                for existing_user in existing_login:  # A for loop to iterate over every item in the first line.
                         existing_login_info = existing_user.split(",")  # Splits the whole string into a list where a "," (comma) is found.
                         
-                        existing_user_email_list = []
+                        existing_user_email_list = [] # ***** this is my most recent add. Because it needs to check all emails and not just the last one iterated over.
+
                         existing_user_email = existing_login_info[0].lower().strip()  # With the spilt above we can now assign variables to seperate parts of the list based on index. For the constructor to build a User class instance. - Using .lower() here to make sure there are no errors in the future based on case.
-                        
-                        for stripped_emails in existing_user_email:
-                            existing_user_email_list.append(existing_user_email)
+                        parsed_users.append(existing_user_email)
+                      
+                        existing_user_email_list.append(existing_user_email)
                         
                         existing_user_password = existing_login_info[1].strip() # We use strip here to clean the data removing whitespace, so that it matches expected input containting no whitespaces. (helpful for the role where it only runs if it matches exact expected key).
-                        
+                        parsed_users.append(existing_user_password)
                         
                         existing_user_role = existing_login_info[2].strip()
-
-                
-
-                    
-
-                    
+                        parsed_users.append(existing_user_role)
                         
-                    
-                        while True:
+                
+            print(parsed_users)        # NOTE TO SELF - Delete when done - this is to show myself list for parsed users for debugging.           
+            while True:
                                 existing_user_input_email = input("What is your email: ").lower().strip() # User lower for cleaner data/avoid future errors.
 
                                     
@@ -107,77 +99,57 @@ if login == "login":
                                     else: print("Invalid Email / Account not located, please try again, or create a new account.")
                                       # Using <contiune> to restart the loop if both condtions are not met. - Instead of <break> which would end the loop, and cause next line of code to run.
                         
-                
-           
-            
-                        
-            
-            
-                              
-                        
+                    
                                    
-                        while True:  # Modifed Password Validation logic from (NEW USER LOGIN LOGIC - Password Validation) - I took the code from below and modifided it to validate the exisitng users password.
-                                                    existing_user_input_password = input("What is your password: ")
+            while True:  # Modifed Password Validation logic from (NEW USER LOGIN LOGIC - Password Validation) - I took the code from below and modifided it to validate the exisitng users password.
+                                        existing_user_input_password = input("What is your password: ")
 
-                                                    accepted_password_symbols_list = ["@", "!", ".", "&", "$", "#", "?"]
-                                                    accepted_password_numbers_list = ["1", "2", "3", "4", "5", "6", "7","8", "9", "0"]
-                                                    accepted_password_uppletters_list = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y","z"]
-                                                    accepted_password_lowletters_list = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y","Z"]
+                                        accepted_password_symbols_list = ["@", "!", ".", "&", "$", "#", "?"]
+                                        accepted_password_numbers_list = ["1", "2", "3", "4", "5", "6", "7","8", "9", "0"]
+                                        accepted_password_uppletters_list = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y","z"]
+                                        accepted_password_lowletters_list = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y","Z"]
 
 
-                                                    password_creation_symbol_check = False  
-                                                    for accepted_password_symbols in accepted_password_symbols_list:  
-                                                        if accepted_password_symbols in existing_user_input_password: 
-                                                            password_creation_symbol_check = True  
+                                        password_creation_symbol_check = False  
+                                        for accepted_password_symbols in accepted_password_symbols_list:  
+                                            if accepted_password_symbols in existing_user_input_password: 
+                                                password_creation_symbol_check = True  
+                                                                            
+                                                                        
+
+                                        password_creation_number_check = False
+                                        for accepted_password_numbers in accepted_password_numbers_list: 
+                                            if accepted_password_numbers in existing_user_input_password:
+                                                password_creation_number_check = True
+                                                                            
+                                                                        
+
+                                        password_creation_uppletter_check = False
+                                        for accepted_password_uppletters in accepted_password_uppletters_list:
+                                            if accepted_password_uppletters in existing_user_input_password:
+                                                password_creation_uppletter_check = True
+                                                                            
+                                                                        
+                                        password_creation_lowletter_check = False
+                                        for accepted_password_lowletters in accepted_password_lowletters_list:
+                                            if accepted_password_lowletters in existing_user_input_password:
+                                                password_creation_lowletter_check = True
                                                                     
+
+                                        if password_creation_symbol_check == True and password_creation_number_check == True and password_creation_uppletter_check == True and password_creation_lowletter_check == True:  # Main Password Check ensuring every requirement is met at once.
+                                            user_password = existing_user_input_password
+                                                                            
+                                            if user_password == existing_user_password:  # Added Secondary <if> instead of <elif> as these two conditions are independet of one another.
+                                                print("Login Success")
+                                                login_completed = True
+                                                break
+                                            else: print("Inncorrect Password")
                                                                 
-
-                                                    password_creation_number_check = False
-                                                    for accepted_password_numbers in accepted_password_numbers_list: 
-                                                        if accepted_password_numbers in existing_user_input_password:
-                                                            password_creation_number_check = True
-                                                                    
-                                                                
-
-                                                    password_creation_uppletter_check = False
-                                                    for accepted_password_uppletters in accepted_password_uppletters_list:
-                                                        if accepted_password_uppletters in existing_user_input_password:
-                                                            password_creation_uppletter_check = True
-                                                                    
-                                                                
-                                                    password_creation_lowletter_check = False
-                                                    for accepted_password_lowletters in accepted_password_lowletters_list:
-                                                        if accepted_password_lowletters in existing_user_input_password:
-                                                            password_creation_lowletter_check = True
-                                                            
-
-                                                    if password_creation_symbol_check == True and password_creation_number_check == True and password_creation_uppletter_check == True and password_creation_lowletter_check == True:  # Main Password Check ensuring every requirement is met at once.
-                                                                    user_password = existing_user_input_password
-                                                                    
-                                                    if user_password == existing_user_password:  # Added Secondary <if> instead of <elif> as these two conditions are independet of one another.
-                                                        print("Login Success")
-                                                        break
-                                                    else: print("Inncorrect Password")
-                                                        
-                                                                    
-                                                        
-                     
-
-
-
-
-
-
-
-
-
-
-                        
-                        existing_user_login = User(existing_user_email, existing_user_password, existing_user_role) # Builds the class instance, based on the varibales calling on certain indexes.
-                        print (existing_user_login)
-                        print(existing_user_login.get_permissions())
-                           # This break is closing the <for> loop on line 73 to prevent it from running over and over again for each record in the list.
-                
+                                                                            
+            login_credentials = [existing_user_email, existing_user_password, existing_user_role]
+            existing_user_login = User(existing_user_email, existing_user_password, existing_user_role, login_credentials) # Builds the class instance, based on the varibales calling on certain indexes.
+            print (existing_user_login)
+            print(existing_user_login.get_permissions())
                                                                         
 
 
@@ -246,7 +218,7 @@ elif login =="signup":
         
 
     
-            while True: # While loop used to ensure we get an expected & acceptable input.
+        while True: # While loop used to ensure we get an expected & acceptable input. -> I unindented by one so that it could run
                 
                     roles_selection_menu = [] # I moved the list and the for loops that result in the printing of the numbered list of roles insde this for loop to allow it to run without error.
 
@@ -266,8 +238,9 @@ elif login =="signup":
                                             
                     else: print("Please choice a number from the list.")
 
+                    new_user_credentials = [new_user_email, user_password, new_user_role] # Added credentials as the class object was changed to inlcude it.
 
-                    logged_in_user = User(new_user_email, user_password, new_user_role) # Stores logged in user info (Password is just user_password for now, subject to change.)
+                    logged_in_user = User(new_user_email, user_password, new_user_role, new_user_credentials) # Stores logged in user info (Password is just user_password for now, subject to change.)
 
                                         
                     for users in User.all_users:  #Using for loop to iterate over and print each instance of (users in all_users) list.
