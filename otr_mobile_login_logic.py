@@ -37,126 +37,112 @@ class Role:
 
 # End of Class defintions for Login Logic
 
+login = "placeholder"
 
-#Existing User Login Logic
-
-
-while True:
-    login = input("Login or Signup: ").lower() # The While loop always runs, asking for an input until correct input is given. 
+def validate_login(login): # Assigned Logic to Function for GUI.  ------ left open???
+# Logic for Exisiting Login Or New Signup
+        login = input()
+        login = login.strip().lower() # Removed console input logic to accept Input from GUI. 
    
-    if login == "login":
-      break
+        if login == "login":
+                return login
+        elif login == "signup":
+                return login
+        
+        else: print("Invalid Entry, please type Login or Signup")
+        
 
-    elif login == "signup":
-         break
-
-    else:
-        print("Invalid Entry, please type Login or Signup")
-
+login = validate_login(login) 
 
 # Existing User Login Logic
-
-if login == "login":
+def validate_existing_login(email, password, role): # Assigned Logic to Function for GUI.
+    if login == "login":
             with open("OTR Mobile Dashboard - Saved Logins.txt", "r") as file: # Opens the text file with saved logins in <"r"> Read Only. ***STORES THEM AS A LIST ALREADY!
             
                 existing_login= file.readlines() #Using readlines instead of read to read each line as a list of strings one per line. Will need to break up into 3 objects for User constructer
                 
-                
-                parsed_users = [] # Added a list outside the for as I was having issues with it iterating over every line due to nature of for loops or breaking entirely due to indents.
-                
+                                
+                parsed_users = [] # Added a list outside the for as I was having issues with it iterating over every line due to nature of for
                 # This for loop is indented on the same line as existing_user_list to allow it to use the full list.
-                for existing_user in existing_login:  # A for loop to iterate over every item in the first line.
-                        existing_login_info = existing_user.split(",")  # Splits the whole string into a list where a "," (comma) is found.
+                  # A for loop to iterate over every item in the first line.
+                for existing_line_items in existing_login:  # A for loop to iterate over every item in the first line.
+                        existing_login_info = existing_line_items.strip().split(",")    
                         
-                        existing_user_email_list = [] # ***** this is my most recent add. Because it needs to check all emails and not just the last one iterated over.
 
-                        existing_user_email = existing_login_info[0].lower().strip()  # With the spilt above we can now assign variables to seperate parts of the list based on index. For the constructor to build a User class instance. - Using .lower() here to make sure there are no errors in the future based on case.
-                        parsed_users.append(existing_user_email)
-                      
-                        existing_user_email_list.append(existing_user_email)
+                        existing_user_email = existing_login_info[0].lower().strip()  # With the spilt above we can now assign variables to seperate parts of the list based on index. For the constructor to build a User class instance. - Using .lower() here to make sure there are no errors in the future based on case.                
+                                     
                         
                         existing_user_password = existing_login_info[1].strip() # We use strip here to clean the data removing whitespace, so that it matches expected input containting no whitespaces. (helpful for the role where it only runs if it matches exact expected key).
-                        parsed_users.append(existing_user_password)
+                
                         
                         existing_user_role = existing_login_info[2].strip()
-                        parsed_users.append(existing_user_role)
+                
+                        parsed_users.append([existing_user_email,existing_user_password,existing_user_role])
                         
                 
-            print(parsed_users)        # NOTE TO SELF - Delete when done - this is to show myself list for parsed users for debugging.           
-            while True:
-                                existing_user_input_email = input("What is your email: ").lower().strip() # User lower for cleaner data/avoid future errors.
+                      
+                print(parsed_users)                   
+# Deleted the <while loop> as it was hurting my attempts at running the program!!!
+                matched_user = None
+                existing_user_input_email = input("What is your email: ").lower().strip() # User lower for cleaner data/avoid future errors.
 
-                                    
-                                if("@" in existing_user_input_email) and (existing_user_input_email.endswith((".com", ".net", ".biz", ".org"))): # Email input Validation / In checks for @ in input, and .endswith to see if it ends in ".com" <or> other variations inside the tuple -> <and> to ensure both condtions are met. - Copied from new_user email validation
-                                       
-                                        
-                                
-                                        # Using second <if> instead of <elif> as these two conditions are independet of one another.
-                                    if existing_user_input_email in existing_user_email_list:  # Checks if the input, is in the existing_user_email_registry
-                                            print("Account located")
-                                            break 
-                                        
-                                    else: print("Invalid Email / Account not located, please try again, or create a new account.")
-                                      # Using <contiune> to restart the loop if both condtions are not met. - Instead of <break> which would end the loop, and cause next line of code to run.
-                        
+                  # Removed email validation for ending in .com and containing @ as it's more for a new account signing up.    
+                
+                for existing_user_line in parsed_users:  
+                    if existing_user_input_email == existing_user_line[0]:
+                                                    
+                        # Removed second if as it was not needed here.
+
+                        matched_user = existing_user_line
+                        print("Account located")
+                        existing_user_email = existing_user_input_email
+                        break
+                                                       
+                if existing_user_input_email != existing_user_line[0]:
+                    print("Invalid Email / Account not located, please try again, or create a new account.")
+            
                     
+                  
+                        
                                    
-            while True:  # Modifed Password Validation logic from (NEW USER LOGIN LOGIC - Password Validation) - I took the code from below and modifided it to validate the exisitng users password.
-                                        existing_user_input_password = input("What is your password: ")
+# Deleted the <while loop> as it was hindering the code.
+    
+            if matched_user: # If we find a user its the list, and if not it returns None.
+                
+                existing_user_input_password = input("What is your password: ")
 
-                                        accepted_password_symbols_list = ["@", "!", ".", "&", "$", "#", "?"]
-                                        accepted_password_numbers_list = ["1", "2", "3", "4", "5", "6", "7","8", "9", "0"]
-                                        accepted_password_uppletters_list = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y","z"]
-                                        accepted_password_lowletters_list = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y","Z"]
+# Removed the validation as it was more for creating a password.  
+       
+        
+                if existing_user_input_password == matched_user[1]:  # Added Secondary <if> instead of <elif> as these two conditions are independet of one another.
+                    print("Login Success")
+                    existing_user_password = existing_user_input_password    
+                                                            
 
-
-                                        password_creation_symbol_check = False  
-                                        for accepted_password_symbols in accepted_password_symbols_list:  
-                                            if accepted_password_symbols in existing_user_input_password: 
-                                                password_creation_symbol_check = True  
+                if existing_user_input_password != matched_user[1]:
+                    print("Inncorrect Password")
+                                             
                                                                             
-                                                                        
-
-                                        password_creation_number_check = False
-                                        for accepted_password_numbers in accepted_password_numbers_list: 
-                                            if accepted_password_numbers in existing_user_input_password:
-                                                password_creation_number_check = True
-                                                                            
-                                                                        
-
-                                        password_creation_uppletter_check = False
-                                        for accepted_password_uppletters in accepted_password_uppletters_list:
-                                            if accepted_password_uppletters in existing_user_input_password:
-                                                password_creation_uppletter_check = True
-                                                                            
-                                                                        
-                                        password_creation_lowletter_check = False
-                                        for accepted_password_lowletters in accepted_password_lowletters_list:
-                                            if accepted_password_lowletters in existing_user_input_password:
-                                                password_creation_lowletter_check = True
-                                                                    
-
-                                        if password_creation_symbol_check == True and password_creation_number_check == True and password_creation_uppletter_check == True and password_creation_lowletter_check == True:  # Main Password Check ensuring every requirement is met at once.
-                                            user_password = existing_user_input_password
-                                                                            
-                                            if user_password == existing_user_password:  # Added Secondary <if> instead of <elif> as these two conditions are independet of one another.
-                                                print("Login Success")
-                                                login_completed = True
-                                                break
-                                            else: print("Inncorrect Password")
                                                                 
-                                                                            
-            login_credentials = [existing_user_email, existing_user_password, existing_user_role]
-            existing_user_login = User(existing_user_email, existing_user_password, existing_user_role, login_credentials) # Builds the class instance, based on the varibales calling on certain indexes.
-            print (existing_user_login)
-            print(existing_user_login.get_permissions())
-                                                                        
+                     
 
 
+
+
+
+
+
+
+    login_credentials = [existing_user_email, existing_user_password, existing_user_role]
+    existing_user_login = User(existing_user_email, existing_user_password, existing_user_role, login_credentials) # Builds the class instance, based on the varibales calling on certain indexes.
+    print (existing_user_login)
+    print(existing_user_login.get_permissions())
+    return existing_user_login # Replaced break with return here as it's a function.           
+                                                                                 
 
 # New User Login Logic
-
-elif login =="signup":
+def validate_new_signup_login(email, password, role): # Assigned Logic to Function for GUI.
+    if validate_login =="signup":
 
         while True:
 
@@ -218,7 +204,7 @@ elif login =="signup":
         
 
     
-        while True: # While loop used to ensure we get an expected & acceptable input. -> I unindented by one so that it could run
+        while True: # While loop used to ensure we get an expected & acceptable input.
                 
                     roles_selection_menu = [] # I moved the list and the for loops that result in the printing of the numbered list of roles insde this for loop to allow it to run without error.
 
@@ -240,11 +226,21 @@ elif login =="signup":
 
                     new_user_credentials = [new_user_email, user_password, new_user_role] # Added credentials as the class object was changed to inlcude it.
 
-                    logged_in_user = User(new_user_email, user_password, new_user_role, new_user_credentials) # Stores logged in user info (Password is just user_password for now, subject to change.)
+                    new_logged_in_user = User(new_user_email, user_password, new_user_role, new_user_credentials) # Stores logged in user info (Password is just user_password for now, subject to change.)
 
                                         
                     for users in User.all_users:  #Using for loop to iterate over and print each instance of (users in all_users) list.
                         print(users)
 
-                    print(logged_in_user.get_permissions())
-                    break  
+                    print(new_logged_in_user.get_permissions())
+                    return new_logged_in_user # Replaced break with return here as it's a function.
+                    
+
+
+# Simulated input from GUI:
+
+
+# Existing Login Simulation
+program_start = validate_login(login)
+user = validate_existing_login("zac@otrmobile.com","OtrRocks12!","admin")
+print(user)

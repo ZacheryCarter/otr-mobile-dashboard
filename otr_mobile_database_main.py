@@ -1,6 +1,6 @@
 import tkinter as tk
 
-root = tk.Tk()
+root = tk.Tk()  # Defines main (or root) window
 
 
 
@@ -18,7 +18,7 @@ root.maxsize(1920, 1080)
 
 main_window_h1= tk.Label(root, text="Dashboard").pack()
 
-main_window_heroimage= tk.PhotoImage(file= "OTR_Social_Sharing_Logo.PNG")
+main_window_heroimage= tk.PhotoImage(file= "assests/OTR_Social_Sharing_Logo.PNG")  # Added assets to the file directory here as it was not loading due to that.
 tk.Label(root, image= main_window_heroimage).pack()
 
 
