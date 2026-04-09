@@ -37,11 +37,9 @@ class Role:
 
 # End of Class defintions for Login Logic
 
-login = "placeholder"
-
-def validate_login(login): # Assigned Logic to Function for GUI.  ------ left open???
+def validate_login(login):
 # Logic for Exisiting Login Or New Signup
-        login = input()
+        # Was running the function inside itself, leading to recursion, delted that
         login = login.strip().lower() # Removed console input logic to accept Input from GUI. 
    
         if login == "login":
@@ -52,7 +50,6 @@ def validate_login(login): # Assigned Logic to Function for GUI.  ------ left op
         else: print("Invalid Entry, please type Login or Signup")
         
 
-login = validate_login(login) 
 
 # Existing User Login Logic
 def validate_existing_login(email, password, role): # Assigned Logic to Function for GUI.
@@ -83,7 +80,7 @@ def validate_existing_login(email, password, role): # Assigned Logic to Function
                 print(parsed_users)                   
 # Deleted the <while loop> as it was hurting my attempts at running the program!!!
                 matched_user = None
-                existing_user_input_email = input("What is your email: ").lower().strip() # User lower for cleaner data/avoid future errors.
+                existing_user_input_email =email.lower().strip() # User lower for cleaner data/avoid future errors. changed to email from <input> for GUI Refactor
 
                   # Removed email validation for ending in .com and containing @ as it's more for a new account signing up.  
                     
@@ -100,7 +97,7 @@ def validate_existing_login(email, password, role): # Assigned Logic to Function
                         # Nested Password inside email validation.
                         if matched_user: # If we find a user its the list, and if not it returns None.
                 
-                            existing_user_input_password = input("What is your password: ")
+                            existing_user_input_password = password #Changed from <input> to password element in function for GUI refactor.
                             # Removed the validation as it was more for creating a password.  
               
                             if existing_user_input_password == matched_user[1]:  # Added Secondary <if> instead of <elif> as these two conditions are independet of one another.
@@ -240,6 +237,6 @@ def validate_new_signup_login(email, password, role): # Assigned Logic to Functi
 
 
 # Existing Login Simulation
-program_start = validate_login(login)
-user = validate_existing_login("zac@otrmobile.com","OtrRocks12!","admin")
+login = validate_login("loGin")
+user =validate_existing_login("zac@otrmobile.com","OtrRocks12!","admin")
 print(user)
