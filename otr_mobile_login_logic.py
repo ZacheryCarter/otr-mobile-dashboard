@@ -78,7 +78,6 @@ def validate_existing_login(email, password, role): # Assigned Logic to Function
                         existing_user_role = existing_login_info[2].strip()
                 
                         parsed_users.append([existing_user_email,existing_user_password,existing_user_role])
-                        
                 
                       
                 print(parsed_users)                   
@@ -86,42 +85,42 @@ def validate_existing_login(email, password, role): # Assigned Logic to Function
                 matched_user = None
                 existing_user_input_email = input("What is your email: ").lower().strip() # User lower for cleaner data/avoid future errors.
 
-                  # Removed email validation for ending in .com and containing @ as it's more for a new account signing up.    
-                
+                  # Removed email validation for ending in .com and containing @ as it's more for a new account signing up.  
+                    
+                matched_user = None # Attributed the matched login to a variable for user later in password authorization.
                 for existing_user_line in parsed_users:  
                     if existing_user_input_email == existing_user_line[0]:
                                                     
-                        # Removed second if as it was not needed here.
-
+                    
                         matched_user = existing_user_line
                         print("Account located")
+                        print(matched_user)
                         existing_user_email = existing_user_input_email
-                        break
+
+                        # Nested Password inside email validation.
+                        if matched_user: # If we find a user its the list, and if not it returns None.
+                
+                            existing_user_input_password = input("What is your password: ")
+                            # Removed the validation as it was more for creating a password.  
+              
+                            if existing_user_input_password == matched_user[1]:  # Added Secondary <if> instead of <elif> as these two conditions are independet of one another.
+                             print("Login Success")
+                             existing_user_password = existing_user_input_password  
+                             break  
+
+                            if existing_user_input_password != matched_user[1]:                                                    
+                                print("Inncorrect Password")
+                        
                                                        
-                if existing_user_input_email != existing_user_line[0]:
+                if matched_user is None: # Using none for my concise logic.
                     print("Invalid Email / Account not located, please try again, or create a new account.")
-            
+                   
                     
                   
                         
                                    
-# Deleted the <while loop> as it was hindering the code.
-    
-            if matched_user: # If we find a user its the list, and if not it returns None.
-                
-                existing_user_input_password = input("What is your password: ")
 
-# Removed the validation as it was more for creating a password.  
-       
-        
-                if existing_user_input_password == matched_user[1]:  # Added Secondary <if> instead of <elif> as these two conditions are independet of one another.
-                    print("Login Success")
-                    existing_user_password = existing_user_input_password    
-                                                            
 
-                if existing_user_input_password != matched_user[1]:
-                    print("Inncorrect Password")
-                                             
                                                                             
                                                                 
                      
@@ -131,14 +130,14 @@ def validate_existing_login(email, password, role): # Assigned Logic to Function
 
 
 
-
-
-    login_credentials = [existing_user_email, existing_user_password, existing_user_role]
-    existing_user_login = User(existing_user_email, existing_user_password, existing_user_role, login_credentials) # Builds the class instance, based on the varibales calling on certain indexes.
-    print (existing_user_login)
-    print(existing_user_login.get_permissions())
-    return existing_user_login # Replaced break with return here as it's a function.           
-                                                                                 
+                # Made an if statement to resolve traceback issues
+                if matched_user and existing_user_input_password == matched_user[1]:
+                    login_credentials = [matched_user[0], matched_user[1], matched_user[2]]
+                    existing_user_login = User(matched_user[0], matched_user[1], matched_user[2], login_credentials) # Builds the class instance, based on the varibales calling on certain indexes.
+                    print (existing_user_login)
+                    print(existing_user_login.get_permissions())
+                    return existing_user_login # Replaced break with return here as it's a function.           
+                                                                                                    
 
 # New User Login Logic
 def validate_new_signup_login(email, password, role): # Assigned Logic to Function for GUI.
