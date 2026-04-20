@@ -37,7 +37,7 @@ class Role:
 
 # End of Class defintions for Login Logic
 
-def validate_login(login):
+def validate_login():
 # Logic for Exisiting Login Or New Signup
         # Was running the function inside itself, leading to recursion, delted that
         login = login.strip().lower() # Removed console input logic to accept Input from GUI. 
@@ -52,8 +52,7 @@ def validate_login(login):
 
 
 # Existing User Login Logic
-def validate_existing_login(email, password, role): # Assigned Logic to Function for GUI.
-    if login == "login":
+def validate_existing_login(email, password): # Removed Role as it is not needed for Login in GUI
             with open("OTR Mobile Dashboard - Saved Logins.txt", "r") as file: # Opens the text file with saved logins in <"r"> Read Only. ***STORES THEM AS A LIST ALREADY!
             
                 existing_login= file.readlines() #Using readlines instead of read to read each line as a list of strings one per line. Will need to break up into 3 objects for User constructer
@@ -233,10 +232,6 @@ def validate_new_signup_login(email, password, role): # Assigned Logic to Functi
                     
 
 
-# Simulated input from GUI:
 
 
-# Existing Login Simulation
-login = validate_login("loGin")
-user =validate_existing_login("zac@otrmobile.com","OtrRocks12!","admin")
-print(user)
+
