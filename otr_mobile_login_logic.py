@@ -105,12 +105,13 @@ def validate_existing_login(email, password): # Removed Role as it is not needed
                              break  
 
                             if existing_user_input_password != matched_user[1]:                                                    
-                                print("Inncorrect Password")
-                        
+                                return "Inncorrect Password"
+                                # return for GUI to be able to pull and use validation.
+                    
                                                        
                 if matched_user is None: # Using none for my concise logic.
-                    print("Invalid Email / Account not located, please try again, or create a new account.")
-                   
+                    return "Invalid Email / Account not located, please try again, or create a new account."
+                    # return for GUI to be able to pull and use validation.
                     
                   
                         
@@ -132,7 +133,8 @@ def validate_existing_login(email, password): # Removed Role as it is not needed
                     existing_user_login = User(matched_user[0], matched_user[1], matched_user[2], login_credentials) # Builds the class instance, based on the varibales calling on certain indexes.
                     print (existing_user_login)
                     print(existing_user_login.get_permissions())
-                    return existing_user_login # Replaced break with return here as it's a function.           
+                    return existing_user_login and "success" 
+                    # Replaced break with return & added "success" for GUI Validation          
                                                                                                     
 
 # New User Login Logic
@@ -141,9 +143,10 @@ def validate_new_signup_login(email, password, role): # Assigned Logic to Functi
     new_user_email = email.strip().lower()
 
 
-    if not ("@" in new_user_email) and (new_user_email.endswith((".com", ".net", ".biz", ".org"))): # Email input Validation / In checks for @ in input, and .endswith to see if it ends in ".com" <or> other variations inside the tuple -> <and> to ensure both condtions are met.
-            return False, print("Invalid Email, please try again.")    
-    # Removed break & returning False here for GUI Refactor using if not so Tkinter knows if the input was valid and keeps going
+    if not ("@" in new_user_email) or not (new_user_email.endswith((".com", ".net", ".biz", ".org"))): # Email input Validation / In checks for @ in input, and .endswith to see if it ends in ".com" <or> other variations inside the tuple -> <and> to ensure both condtions are met.
+            return "Invalid Email, please try again."
+    # Replaced and with or for better validation.
+    # Removed break and print & returning False here for GUI Refactor using if not so Tkinter knows if the input was valid and keeps going
 
 
 # Password Creation/Validation Logic
@@ -152,8 +155,8 @@ def validate_new_signup_login(email, password, role): # Assigned Logic to Functi
 
     accepted_password_symbols_list = ["@", "!", ".", "&", "$", "#", "?"]
     accepted_password_numbers_list = ["1", "2", "3", "4", "5", "6", "7","8", "9", "0"]
-    accepted_password_uppletters_list = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y","z"]
-    accepted_password_lowletters_list = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y","Z"]
+    accepted_password_lowletters_list = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y","z"]
+    accepted_password_uppletters_list = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y","Z"]
 
 
     password_creation_symbol_check = False  # Starting with the default value of the variable as False as we are looking for ANY possible match.
@@ -185,45 +188,29 @@ def validate_new_signup_login(email, password, role): # Assigned Logic to Functi
 
     if password_creation_symbol_check == True and password_creation_number_check == True and password_creation_uppletter_check == True and password_creation_lowletter_check == True:  # Main Password Check ensuring every requirement is met at once.
         user_password = password_creation
-        print("Password saved: ", user_password)
+        # Removed Return here as it was returning to early making role inaccessible.
 
 
-    else: print("Invalid Password, please try again and include one symbol, upper-case letter, lower-case letter, and number in your desired password.")
-
-        
-        
-
-    
-        
-                
-    roles_selection_menu = [] # I moved the list and the for loops that result in the printing of the numbered list of roles insde this for loop to allow it to run without error.
-
-    for number_of_role, available_roles in enumerate(Role.role_permissions): # For loop for creating items for role_selection_menu, enumerate counts each instance iterated over and stores it (for i, variable in main variable)
-        roles_selection_menu.append((number_of_role + 1, available_roles)) # Appends the for loop output to the empty list, uses double parathesis to make it one object as a tuple to be appendable. - added + 1 as Python defaults to 0.
+    else: 
+         return "Invalid Password, please try again and include one symbol, upper-case letter, lower-case letter, and number in your desired password."
+        # Using return so the GUI can access and decide how to display messages to the user.
 
 
-    for selectable_roles_numbers, selectable_roles in roles_selection_menu:
-                                            
-        print (f"Available Roles:  {selectable_roles_numbers}. {selectable_roles}") # F string used here to unpack the tuple created by other for loop, as F strings only require "" at beginning and end - maintaining neatness.
-                        
+    # Deleted Terminal Logic to Assign & Choose a Role - In Favor of the GUI Refactor.
 
-        new_user_role = (input("What is your role? "))
-                
-        if  int(new_user_role) == selectable_roles_numbers: # Makes sure input matches item from list. Used with int() to allow users to input the number asscioated with it from the list.
-                        new_user_role = selectable_roles # If input matches it assigns it the corresponding role.
-                                            
-        else: print("Please choice a number from the list.")
+    new_user_role = role
 
-        new_user_credentials = [new_user_email, user_password, new_user_role] # Added credentials as the class object was changed to inlcude it.
+    new_user_credentials = [new_user_email, user_password, new_user_role] # Added credentials as the class object was changed to inlcude it.
 
-        new_logged_in_user = User(new_user_email, user_password, new_user_role, new_user_credentials) # Stores logged in user info (Password is just user_password for now, subject to change.)
+    new_logged_in_user = User(new_user_email, user_password, new_user_role, new_user_credentials) # Stores logged in user info (Password is just user_password for now, subject to change.)
 
                                         
-        for users in User.all_users:  #Using for loop to iterate over and print each instance of (users in all_users) list.
-            print(users)
+    for users in User.all_users:  #Using for loop to iterate over and print each instance of (users in all_users) list.
+        print(users)
 
-        print(new_logged_in_user.get_permissions())
-        return new_logged_in_user # Replaced break with return here as it's a function.
+    print(new_logged_in_user.get_permissions())
+    return new_logged_in_user and "success" 
+# Added "success" to the return here to fully complete the logic for account creation in the GUI.
                     
 
 

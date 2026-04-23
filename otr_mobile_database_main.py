@@ -1,4 +1,11 @@
-import tkinter as tk             
+# Tkinter Import
+import tkinter as tk
+
+#Tkinter Tools Import
+from tkinter import ttk  #Importing ttk from tkinter (newer tools like Combobox)
+from tkinter import messagebox # Importing messagebox (a tool that shows "pop-up" windows)
+
+# Login Logic File Imports
 from otr_mobile_login_logic import validate_existing_login # Imports function from login logic file (seperate file)
 from otr_mobile_login_logic import validate_new_signup_login
 from otr_mobile_login_logic import Role
@@ -6,7 +13,7 @@ from otr_mobile_login_logic import Role
 root = tk.Tk()  # Defines main (or root) window
 
 
-root.title("OTR Mobile Database")
+root.title("Welcome")
 root.configure(background= "black")
 root.minsize(500, 500)
 root.maxsize(1920, 1080)
@@ -16,14 +23,26 @@ main_window_h1= tk.Label(root, text="Dashboard").pack()
 main_window_heroimage= tk.PhotoImage(file= "assests/OTR_Social_Sharing_Logo.PNG")  # Added assets to the file directory here as it was not loading due to that.
 tk.Label(root, image= main_window_heroimage).pack()
 
+# Code to Open Dashboard Window
+def dashboard_open(): 
+ 
+ dashboard_window = tk.Toplevel(root)
+ dashboard_window.title("OTR Mobile Dashboard")
+
+ dashboard_window_h1 = tk.Label(dashboard_window, text = " DASHBOARD IS WIP")
+ dashboard_window_h1.pack()
+
 
 def login_click():  #This function opens a new window when activated
     
     # Start Of Code for Toplevel "login window" ///////////////////
-    
+
+    root.withdraw() # Hides the main root upon login click to avoid a thousand windows.
     login_window= tk.Toplevel(root)
     login_window.title("Login Required")  #Changed the title of the new_window which is a variable that opens a new window.
-    login_window_h1 = tk.Label(login_window, text = "Login Required").pack() #used <new_window> instead of root as that is where it is being placed.
+
+    login_window_h1 = tk.Label(login_window, text = "Login Required") #used <new_window> instead of root as that is where it is being placed.
+    login_window_h1.pack()
 
 
 
@@ -41,11 +60,22 @@ def login_click():  #This function opens a new window when activated
 
      user = validate_existing_login(email, password)
 
-     for widget in root.winfo_children():  # Destorys all widgets in root, so the dashboard can show with successful login.
-            widget.destroy()
+    # \\\ Start of messagebox (pop-up) user validation code ///
+     signup_function_result = validate_existing_login(email, password)
 
-     if user:  # Destroys the login window when a user is found/exists.
-         login_window.destroy()
+     if signup_function_result == "success":
+        messagebox.showinfo("Success", "Login Successful")
+
+                        
+        login_window.destroy() # Destroys the login window on succesful account creation.
+        dashboard_open() # Opens Dashboard
+        return
+                
+     else:
+        messagebox.showerror("Error", signup_function_result)
+
+     # \\\ End of Messagebox Code ///
+
 
         
     login_window_login_button = tk.Button(login_window, text = "Login", command = submit_login)
@@ -61,55 +91,53 @@ def login_click():  #This function opens a new window when activated
           login_window_new_pass_entry = tk.Entry(login_window) # Creates new Entry box for Password signup.
           login_window_new_pass_entry.pack()
 
-          login_role_textbox = tk.Label(login_window, text = "Select your role:")
-          login_role_textbox.pack()
+         
+          # Switched to Combobox from Listbox for better longevity, and using <ttk> instead of <tk> as Combobox does not exist in <tk>
+          login_window_role_selection_box = ttk.Combobox(login_window, values=[list(Role.role_permissions.keys())], state= "readonly")
+          # Using list() to avoid dict_keys(['admin']) as its a special object & changed the state to read only to avoid allowing for input.
+          # Using Role.role_permissions to have it fill all avialbe Roles (and their permisisons). Using .keys() to pull the key - example (admin: 01), pulling "admin" as it is the key.
 
-
-          # Listbox - code inside submit_new account function to avoid breaking indentation for buttons following it.
-          login_window_role_selection_box = tk.Listbox(login_window, height = 4) # listbox (dropdown) of availble roles excluding admin (for now).
           login_window_role_selection_box.pack()
-
-          # \\\\\Code for Role Selection Listbox//////
-          for role in Role.role_permissions: # for loop to itreate over all roles and their permissions from logic code.
-             login_window_role_selection_box.insert(tk.END, role) # Inserts roles from list, tk.END puts the next instance of role last "at the end", so after it adds "admin" then "shipper" would be added after it or "at the end".
-
-             selected_role_index = login_window_role_selection_box.curselection() # curselection shows/gives what the user selected. By giving the index (or position) of whatever was selected. So if admin was first in the list it would be 0.
-             # Created the selected_role_index variable to host the selected tuple.
-
-             if not selected_role_index:
-                print("Please Select a role")
-                return
-             
-             
-             new_user_role = login_window_role_selection_box.get[selected_role_index[0]]
-             return
-             # Using the created variable selected_role_index that fetches the tuple and the item at index 0 (the number assciaoted) to return the item at that location from the listbox (dropdown.)
-             
-             # \\\\\ END Of Role Selection Listbox Code////////
+          login_window_role_selection_box.set("Select a Role")
 
 
           def submit_new_account():         
 
            email = login_window_new_email_entry.get()  
            password = login_window_new_pass_entry.get()
-           role = new_user_role
+           role = login_window_role_selection_box.get()
 
            user = validate_new_signup_login(email, password, role)
 
-           for widget in root.winfo_children():  # ////!!!! Change this to reprompt login - later
-                        widget.destroy()
+
+           # \\\ Start of messagebox (pop-up) user validation code ///
+           signup_function_result = validate_new_signup_login(email, password, role)
+
+           if signup_function_result == "success":
+                messagebox.showinfo("Success", "Account created")
+
                         
-           if user:  # Destroys the login window when a user is found/exists.
-                login_window.destroy()
+                login_window.destroy() # Destroys the login window on succesful account creation.
+                dashboard_open() # Opens Dashboard
                 return
+                
+           else:
+                messagebox.showerror("Error", signup_function_result)
+
+           # \\\ End of Messagebox Code ///
+
  
 
           login_window_existing_login_button = tk.Button(login_window, text = "Signup", command = submit_new_account)
           login_window_existing_login_button.pack()
 
+          def return_to_existing_login():
+             login_window.destroy() # Destorys old login window.
+             login_click()          # Creates new login window.
           
-          login_window_existing_account_button = tk.Button(login_window, text = "Already Have an account? Click Here", command = "none")
+          login_window_existing_account_button = tk.Button(login_window, text = "Already Have an account? Click Here", command = return_to_existing_login)
           login_window_existing_account_button.pack()
+          
 
           
 
