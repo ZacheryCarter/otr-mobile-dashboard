@@ -24,13 +24,45 @@ main_window_heroimage= tk.PhotoImage(file= "assests/OTR_Social_Sharing_Logo.PNG"
 tk.Label(root, image= main_window_heroimage).pack()
 
 # Code to Open Dashboard Window
-def dashboard_open(): 
- 
+def dashboard_open(email, password): 
+
  dashboard_window = tk.Toplevel(root)
  dashboard_window.title("OTR Mobile Dashboard")
 
+ dashboard_window.geometry("900x500") # Sets the standard dashboard window height/width
+
  dashboard_window_h1 = tk.Label(dashboard_window, text = " DASHBOARD IS WIP")
  dashboard_window_h1.pack()
+
+
+ dashboard_window_main_frame = tk.Frame(dashboard_window) 
+ dashboard_window_main_frame.pack(fill = "both", expand = True) # fill will use all avaible space for x, y, or both. expand just tells the program that if there is unused space to give some to this widget.
+ # The main or parent frame for all subsquent frames (to make adding frames easier.)
+
+ dashboard_window_left_main_frame = tk.Frame(dashboard_window_main_frame)
+ dashboard_window_left_main_frame.pack(fill ="y", side = "left") # Creates subframe for left side of main frame (for easier management).
+
+ account_framebox = tk.Frame(dashboard_window_left_main_frame, bg = "white", bd = 2, relief = "sunken", height = 50, width = 200) # Creates widget (size, color, border)
+ # bd is the code for border, and relief is the border style so a solid line here.
+
+ account_framebox.pack(anchor = "nw",  padx = 10, pady = 10) # Tells where to place it on the window and the spacing
+ # Anchor (like a compass) tells where to place it "northwest", and side where so top, bottom, left, right. - removed side since a left main frame was added.
+
+ account_framebox.pack_propagate(False) # Tells program not to resize only to fit contents.
+
+ logged_in_account_email_label = tk.Label(account_framebox, text = f"Logged in: {email}")
+ logged_in_account_email_label.pack(pady = 10)
+
+ logged_in_account_password = password
+ # Stores password as "hidden/background" variable
+
+
+ main_framebox = tk.Frame(dashboard_window_main_frame, bg = "white", bd = 2, relief = "sunken", height = 300, width = 500)
+ main_framebox.pack(anchor = "center", side = "left", padx = 10, pady = 50)
+
+ sidebar_navigation_framebox = tk.Frame(dashboard_window_left_main_frame, bg = "white", bd = 2, relief = "sunken", height = 300, width = 200)
+ sidebar_navigation_framebox.pack(anchor = "nw", padx = 10)
+ 
 
 
 def login_click():  #This function opens a new window when activated
@@ -68,7 +100,7 @@ def login_click():  #This function opens a new window when activated
 
                         
         login_window.destroy() # Destroys the login window on succesful account creation.
-        dashboard_open() # Opens Dashboard
+        dashboard_open(email, password) # Opens Dashboard
         return
                 
      else:
@@ -108,6 +140,7 @@ def login_click():  #This function opens a new window when activated
            role = login_window_role_selection_box.get()
 
            user = validate_new_signup_login(email, password, role)
+         
 
 
            # \\\ Start of messagebox (pop-up) user validation code ///
